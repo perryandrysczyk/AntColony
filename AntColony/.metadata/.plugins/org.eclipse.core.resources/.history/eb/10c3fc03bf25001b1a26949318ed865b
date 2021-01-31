@@ -1,0 +1,63 @@
+import java.util.*;
+
+public class Scout extends Ant{
+	
+	private static Random rand;
+	
+	public Scout() {
+		super();
+		super.setId(super.getId()+1);
+		rand = new Random();
+	}
+	
+	public void move(ColonyNodeView[][] grid) {
+		int mover;
+		boolean direction;
+		int currentX;
+		int currentY;
+		int previousX;
+		int previousY;
+		//Scout currentScout = new Scout();
+		
+		//all scout ants will start in the queen square
+		//currentScout.setAntSpotY(13);
+		//currentScout.setAntSpotX(13);
+		currentY = super.getAntSpotY();
+		currentX = super.getAntSpotX();
+		previousX = currentX;
+		previousY = currentY;
+		
+		
+		while(currentX == previousX && currentY == previousY) {
+			direction = rand.nextBoolean();
+			mover = rand.nextInt(3)-1;
+				if(direction){
+					currentX += mover;	
+				}
+	
+			
+			direction = rand.nextBoolean();
+			mover = rand.nextInt(3)-1;
+				if(direction) {
+					currentY += mover;	
+				}
+					
+			
+			
+			grid[currentX][currentY].setScoutCount(grid[currentY][currentY].getScouts()-1);
+			grid[previousX][previousY].hideScoutIcon();
+			//grid[previousX][previousY].setScoutCount(grid[previousX][previousY].getScouts()-1);
+			//turn++;
+			
+			if(grid[currentX][currentY].getScouts()==0) {
+				grid[currentX][currentY].hideScoutIcon();
+			}
+			
+			currentScout.setAntSpotX(currentX);
+			currentScout.setAntSpotY(currentY);	
+			grid[currentX][currentY].showScoutIcon();
+			grid[currentX][currentY].showNode();
+			grid[currentX][currentY].setScoutCount(grid[currentX][currentY].getScouts()+1);
+		}
+	}
+}

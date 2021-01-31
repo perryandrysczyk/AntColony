@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;VideoProc&apos;" deleteContents="false" description="Delete resource &apos;VideoProc&apos;" element1="/VideoProc" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1607100541885"/>
+</session>

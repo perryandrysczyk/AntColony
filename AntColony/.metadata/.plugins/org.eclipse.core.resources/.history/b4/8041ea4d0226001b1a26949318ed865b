@@ -1,0 +1,198 @@
+import java.util.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+
+public class AntColonySimulation extends AntSimGUI implements SimulationEventListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8986833550173074386L;
+	/**
+	 * ATTRIBUTES
+	 */
+	
+	ArrayList<Scout> scouts = new ArrayList<>();
+	//Create a new ColonyView	
+	private static ColonyView colView = new ColonyView(27,27);
+	//Create the grid of ColonyNodeView objects
+	private static ColonyNodeView[][] grid = new ColonyNodeView[27][27];
+	private int turn = 0,day = 0,year = 0;
+	private boolean stepMode = false;
+	private AntSimGUI simGui = new AntSimGUI();
+	public static int foodAmount = 1000, foragerCount = 50, scoutCount = 4, soldierCount = 10;
+	public Queen queen = new Queen();
+	private static int localScoutCount = 0;
+	private static int localBalaCount = 0;
+	private static int localForagerCount = 0;
+	private static int localSoldierCount = 0;
+	//random number generation
+	public static Random rand = new Random();
+	Scout testScout = new Scout();
+	
+	
+	public AntColonySimulation() {
+		simGui.initGUI(colView);
+		simGui.addSimulationEventListener(this);
+		//scouts.add(test);
+		initGrid(grid);
+	}
+	
+	
+	private static void initGrid(ColonyNodeView[][] grid) {
+		
+		//randomized chance of food and amount of food
+		int chanceOfFood, amountOfFood;
+		//set up the values in each square
+		for(int i=0; i<grid.length;i++) {
+			for(int j=0;j<grid[i].length; j++) {
+				chanceOfFood = rand.nextInt(100);
+				if(chanceOfFood<=25) {
+					amountOfFood = rand.nextInt(501)+500;
+				}else {
+					amountOfFood = 0;
+				}
+				grid[i][j] = new ColonyNodeView();
+				//grid[i][j].setX(i);
+				//grid[i][j].setY(j);
+				grid[i][j].setFoodAmount(amountOfFood);
+				grid[i][j].showNode();
+				grid[i][j].hideBalaIcon();
+				grid[i][j].hideForagerIcon();
+				grid[i][j].hideScoutIcon();
+				grid[i][j].hideSoldierIcon();
+				grid[i][j].setScoutCount(localScoutCount);
+				//grid[i][j].setSoldierCount(localSoldierCount);
+				//grid[i][j].setBalaCount(localBalaCount);
+				//grid[i][j].setForagerCount(localForagerCount);
+				colView.addColonyNodeView(grid[i][j], i, j);
+				if(i >= 12 && i<=14 && j >= 12 && j <= 14)
+					grid[i][j].showNode();
+			}
+		}
+		initQueenSquare();
+	}
+	
+	
+
+	//initializes the queen square at begining of simulation
+	private static void initQueenSquare() {
+		ColonyNodeView queenSquare = grid[13][13];
+		queenSquare.setQueen(true);
+		queenSquare.showQueenIcon();
+		queenSquare.showForagerIcon();
+		queenSquare.showScoutIcon();
+		queenSquare.showSoldierIcon();
+		queenSquare.setFoodAmount(foodAmount);
+		queenSquare.setForagerCount(foragerCount);
+		queenSquare.setSoldierCount(soldierCount);
+		queenSquare.setScoutCount(scoutCount);
+		queenSquare.showNode();
+		
+	}
+	
+	public void queenTurn() {
+		//queen will die if food amount is empty or queen's life span is reached
+		if((foodAmount <= 0) || turn >= 73000) {
+			//stepMode = false;
+			queen.die();
+		}
+		
+		foodAmount--;
+		ColonyNodeView queenSquare = grid[13][13];
+		if(turn%10 == 0 ) {
+			Ant newAnt = queen.hatch();
+			if(newAnt.getClass().equals(Forager.class)) {
+				foragerCount++;
+				queenSquare.setForagerCount(foragerCount);
+			}
+			else if(newAnt.getClass().equals(Scout.class)) {
+				scoutCount++;
+				scouts.add((Scout)newAnt);
+				queenSquare.setScoutCount(scoutCount);
+			}
+			else if(newAnt.getClass().equals(Soldier.class)) {
+				soldierCount++;
+				queenSquare.setSoldierCount(soldierCount);
+			}
+			day++;//increment day
+		}
+		//consume 1 unit of food
+		queenSquare.setFoodAmount(foodAmount);
+		turn++;
+		
+	}
+	
+	
+	public void scoutTurn() {
+//		if(turn == 0) {
+//			for(int i=0; i<scouts.size(); i++) {
+				//Scout newScout = new Scout();
+//				scouts.add(newScout);
+//			}
+//		}
+		
+		
+		//for(int i=0; i<scouts.size(); i++) {
+			testScout.move();
+		//}
+		
+	}
+	
+	
+	
+	@Override
+	public void simulationEventOccurred(SimulationEvent simEvent) {
+		ColonyNodeView queenSquare = grid[13][13];
+		
+		 if (simEvent.getEventType() == SimulationEvent.NORMAL_SETUP_EVENT) { 
+			 initGrid(grid);
+		 }
+		 else if (simEvent.getEventType() == SimulationEvent.QUEEN_TEST_EVENT) { 
+			queenTurn();
+		 }
+		 else if (simEvent.getEventType() == SimulationEvent.SCOUT_TEST_EVENT) { 
+			 scoutTurn(); 
+			 
+		 }
+		 else if (simEvent.getEventType() == SimulationEvent.FORAGER_TEST_EVENT) { 
+			 // set up simulation for testing the forager ant
+		 }
+		 else if (simEvent.getEventType() == SimulationEvent.SOLDIER_TEST_EVENT) {
+			 // set up simulation for testing the soldier ant 
+		 } 
+		 else if (simEvent.getEventType() == SimulationEvent.RUN_EVENT) {
+			// run the simulation continuously 
+		 }	 
+		 else if (simEvent.getEventType() == SimulationEvent.STEP_EVENT) {
+			 queenTurn();
+			 scoutTurn();
+			 //increment turn after each click
+			 
+		 }
+		 else { 
+			 // invalid event occurred - probably will never happen 
+		 }
+		 
+		for(int i=0; i<grid.length; i++) {
+			for(int j=0; j<grid[i].length; j++) {
+				if(foragerCount == 0) {
+					queenSquare.hideForagerIcon();
+				}
+				if(scoutCount == 0) {
+					queenSquare.hideScoutIcon();
+				}
+				if(soldierCount == 0) {
+					queenSquare.hideScoutIcon();
+				}
+			}
+		}
+		 turn++;
+		}
+		
+	}
+
+	
+

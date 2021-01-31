@@ -1,0 +1,108 @@
+import java.util.*;
+
+public class Scout extends Ant{
+	
+	private static Random rand;
+	
+	public Scout() {
+		super();
+		super.setId(super.getId()+1);
+		rand = new Random();
+	}
+	
+	public void move(ColonyNodeView[][] grid) {
+		int randomX = this.getAntSpotX(); //to hold a randomly generated value for x axis location
+		int randomY = this.getAntSpotY(); //to hold a randomly generated value for y axis location
+		int currentX = this.getAntSpotX(); //hold current x location
+		int currentY = this.getAntSpotY(); //hold current y location
+		
+		//ensuring X and Y doesn't stay the same so a move actually occurs
+		while (randomX == this.getAntSpotX() && randomY == this.getAntSpotY())
+		{
+			//generating random numbers to determine movement
+			//0 = subtract one, 1 = stay the same, 2 = plus one
+			
+			//generating x value
+			int randomNum = rand.nextInt(3);
+			if (randomNum == 0 && this.getAntSpotX() > 0)
+				randomX = (this.getAntSpotX()-1); //subtract one from x
+			else if (randomNum == 2 && this.getAntSpotX() < 26)
+				randomX = (this.getAntSpotX()+1); //add one to x
+			else
+			{} //value is 1 or a boundary issue occurred so the value doesn't change
+				
+			//generating y value	
+			randomNum = rand.nextInt(3);
+			if (randomNum == 0 && this.getAntSpotY() > 0)
+				randomY = (this.getAntSpotY()-1); //subtract one from y
+			else if (randomNum == 2 && this.getAntSpotY() < 26)
+				randomY = (this.getAntSpotY()+1); //add one to y
+			else
+			{} //value is 1 or a boundary issue occurred so the value doesn't change
+		}
+		
+		//decrement scout count in current node before moving
+		grid[currentX][currentY].setScoutCount(grid[currentX][currentY].getScouts()-1);
+		//increment scout count in node being moved to
+		grid[randomX][randomY].setScoutCount(grid[randomX][randomY].getScouts()+1);
+		//check whether new node is shown and make it visible if it is not
+		//if (!(grid[randomX][randomY].getShown()))
+		//{
+			grid[randomX][randomY].showNode();
+			grid[randomX][randomY].showScoutIcon();
+		//}
+		//setting new location values
+		this.setAntSpotX(randomX);
+		this.setAntSpotY(randomY);
+		
+	}
+//		int mover;
+//		boolean direction;
+//		int currentX;
+//		int currentY;
+//		int previousX;
+//		int previousY;
+//		Scout currentScout = new Scout();
+//		
+//		//all scout ants will start in the queen square
+//		//currentScout.setAntSpotY(13);
+//		//currentScout.setAntSpotX(13);
+//		currentY = currentScout.getAntSpotY();
+//		currentX = currentScout.getAntSpotX();
+//		previousX = currentX;
+//		previousY = currentY;
+//		
+//		
+//		while(currentX == previousX && currentY == previousY) {
+//			direction = rand.nextBoolean();
+//			mover = rand.nextInt(3)-1;
+//				if(direction){
+//					currentX += mover;	
+//				}
+//	
+//			
+//			direction = rand.nextBoolean();
+//			mover = rand.nextInt(3)-1;
+//				if(direction) {
+//					currentY += mover;	
+//				}
+//					
+//			
+//			
+//			grid[currentX][currentY].setScoutCount(grid[currentY][currentY].getScouts()-1);
+//			grid[previousX][previousY].hideScoutIcon();
+//			//grid[previousX][previousY].setScoutCount(grid[previousX][previousY].getScouts()-1);
+//			//turn++;
+//			
+//			if(grid[currentX][currentY].getScouts()==0) {
+//				grid[currentX][currentY].hideScoutIcon();
+//			}
+//			
+//			currentScout.setAntSpotX(currentX);
+//			currentScout.setAntSpotY(currentY);	
+//			grid[currentX][currentY].showScoutIcon();
+//			grid[currentX][currentY].showNode();
+//			grid[currentX][currentY].setScoutCount(grid[currentX][currentY].getScouts()+1);
+//		}
+//	}
+}

@@ -1,0 +1,47 @@
+import java.util.*;
+
+public class Scout extends Ant{
+	
+	private static Random rand;
+	
+	public Scout() {
+		super();
+		super.setId(super.getId()+1);
+		rand = new Random();
+	}
+	
+	public void move(ColonyNodeView[][] grid) {
+		int x = this.getAntSpotX();
+		int y = this.getAntSpotY();
+		int lastX = 0, lastY=0;
+		int offset;
+		
+		
+		
+		grid[x][y].hideScoutIcon();
+		
+		offset = rand.nextInt(3)-1;
+		
+		lastX = this.getAntSpotX();
+		this.setAntSpotX(this.getAntSpotX()+offset);	
+		
+
+		
+		
+		offset = rand.nextInt(3)-1;
+		lastY = this.getAntSpotY();
+		this.setAntSpotY(this.getAntSpotY()+offset);	
+		
+		grid[lastX][lastY].setScoutCount(grid[lastX][lastY].getScouts()-1);
+		grid[this.getAntSpotX()][this.getAntSpotY()].setScoutCount(grid[x][y].getScouts()+1);
+		
+		
+		
+		grid[this.getAntSpotX()][this.getAntSpotY()].showScoutIcon();
+		grid[this.getAntSpotX()][this.getAntSpotY()].showNode();
+		
+		
+		
+	}
+
+}
